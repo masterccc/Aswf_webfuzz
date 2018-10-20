@@ -7,6 +7,8 @@ from argparse import ArgumentParser
 import urllib.request
 import re
 import random
+import socket
+import time
 
 # Défaut user-agent
 default_ua = "Mozilla/5.0 (X11; U; Linux i686) Gecko/20071127 Firefox/2.0.0.11"
@@ -23,7 +25,7 @@ dirs = [
 	"xml","api", "files","upload","file","uploads",
 	"upload","download","downloads","wp-content",
 	"wp-upload","default""site","sites","log","logs",
-	"stats","stat","status"
+	"stats","stat","status","setup"
 ]
 
 # Files to test
@@ -47,14 +49,18 @@ domains = [
 	"beta"
 ]
 
+_method = 'HEAD'
+_tempo = 0
+
 def get_base_url(url):
         p = re.compile('http(s?)://(www\.)?')
         return p.sub('', url)
 
-def make_domaine_url(_url, _itm):
-	ret_url = _url.split(":")[0] + '://' +  _itm 
-	ret_url += '.' + get_base_url(_url) + '/'
-	return ret_url
+def make_domaine(_url, _itm):
+	return _itm + '.' + get_base_url(_url)
+
+def print_ok(msg):
+	 print("\033[0;32m'" + msg +"\033[0m" )
 
 # Arguments management
 parser = ArgumentParser()
@@ -76,7 +82,7 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-if( not args.url):
+if(not args.url):
 	print("Use -u your.url.pliz")
 	exit(1)
 
@@ -86,15 +92,16 @@ if(_url[-1] == "/"):
 	_url = _url[:-1]
 
 
+
 scan_routine = [ 
-	["directories", dirs + 
-	[ "v" + str(i) for i in range(1,5)]
+	["directories",
+		dirs
+		+ [ "v" + str(i) for i in range(1,5)]
 		+ list(range(2010,2019))
-		+ [ "v" + str(i) for i in range(2010,2019)]
-		, False],
-	["files", files, False,],
-	["readables files",files_content,False] ,
-	["domains", domains, True]
+		+ [ "v" + str(i) for i in range(2010,2019)]],
+	["files", files],
+	["readables files",files_content]
+#	["domains", domains]
 ]
 i = 1
 
@@ -104,18 +111,21 @@ for r in scan_routine:
 	for item in r[1]:
 		res = None
 		_itm = str(item)
-		_method = 'HEAD'
+		
 
 		# url like http://the.url/dir/		 
 		if (r[0][0:11]=="directories"):
 			url = _url + '/' + _itm + '/'
-			#_method='GET'
 
 		#url like http(s?)://item.the.url
 		elif (r[0][0:8]=="domains"):
-			url = make_domaine_url(_url, _itm)
-			#_method='GET'
-
+			url = make_domaine(_url, _itm)
+			try:
+				resolv = socket.gethostbyname(url)
+				print("OK\t" + url)
+				continue
+			except socket.gaierror:
+				continue
 		else:
 			url = _url + '/' + _itm
 
@@ -131,8 +141,9 @@ for r in scan_routine:
 		
 
 		if(code != 404):
-			print(code, "\t", url)
+			print_ok(str(code) + "\t" + url)
 			#print(i,"/",50, end="")
 			if(r[0] == "readables files"):
 				print(res.read().decode("utf-8"))
 		i += 1
+		time.sleep(args.tempo)
