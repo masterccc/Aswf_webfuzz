@@ -3,6 +3,12 @@
 # Aswf - Web fuzzer
 # 100% tiny, 100% effective
 
+# FOR EDUCATIONAL PURPOSE ONLY
+# USE ON OUR OWN WEB SERVER PLEASE
+# Masterccc does not assumes any responsibility
+# for any consequence of using these documents
+
+
 from argparse import ArgumentParser
 import urllib.request
 import re
