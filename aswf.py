@@ -28,10 +28,10 @@ dirs = [
 	"config","configuration","conf","install",
 	"installation",".git",".svn","gestion","php",
 	"cgi-bin","cgi-sys","old", "secure","mysql",
-	"xml","api", "files","upload","file","uploads",
-	"upload","download","downloads","wp-content",
+	"xml","api", "files","file","uploads","upload",
+	"download","downloads","wp-content",
 	"wp-upload","default""site","sites","log","logs",
-	"stats","stat","status","setup"
+	"stats","stat","status","setup","upload_file","upload_files"
 ]
 
 # Files to test
