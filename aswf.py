@@ -137,6 +137,7 @@ for r in scan_routine:
 
 		req = urllib.request.Request(url=url, method=_method)
 		req.add_header("User-Agent", args.ua)
+		req.add_header("Connection", "keep-alive")
 		code = -1
 
 		try:
