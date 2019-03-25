@@ -107,7 +107,7 @@ scan_routine = [
 		+ [ "v" + str(i) for i in range(2010,2019)]],
 	["files", files],
 	["readables files",files_content]
-#	["domains", domains]
+	["domains", domains]
 ]
 i = 1
 
@@ -128,7 +128,7 @@ for r in scan_routine:
 			url = make_domaine(_url, _itm)
 			try:
 				resolv = socket.gethostbyname(url)
-				print("OK\t" + url)
+				print(url + '\t' + resolv)
 				continue
 			except socket.gaierror:
 				continue
