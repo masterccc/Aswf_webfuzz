@@ -15,6 +15,9 @@ import re
 import random
 import socket
 import time
+import ssl
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 # Défaut user-agent
 default_ua = "Mozilla/5.0 (X11; U; Linux i686) Gecko/20071127 Firefox/2.0.0.11"
