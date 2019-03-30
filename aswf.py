@@ -47,7 +47,7 @@ files = [
 
 # Files which content will be displayed
 files_content = [
-	"robots.txt"
+	"robots.txt","web.config"
 ]
 
 # Domains to test
@@ -58,7 +58,7 @@ domains = [
 	"beta"
 ]
 
-_method = 'HEAD'
+_method = 'GET'
 _tempo = 0
 
 def get_base_url(url):
@@ -69,7 +69,7 @@ def make_domaine(_url, _itm):
 	return _itm + '.' + get_base_url(_url)
 
 def print_ok(msg):
-	 print("\033[0;32m'" + msg +"\033[0m" )
+	 print("\033[0;32m" + msg +"\033[0m" )
 
 # Arguments management
 parser = ArgumentParser()
@@ -109,7 +109,7 @@ scan_routine = [
 		+ list(range(2010,2019))
 		+ [ "v" + str(i) for i in range(2010,2019)]],
 	["files", files],
-	["readables files",files_content]
+	["readables files",files_content],
 	["domains", domains]
 ]
 i = 1
@@ -143,6 +143,7 @@ for r in scan_routine:
 		req.add_header("Connection", "keep-alive")
 		code = -1
 
+
 		try:
 			res = urllib.request.urlopen(req)
 			code = res.getcode()
@@ -151,9 +152,18 @@ for r in scan_routine:
 		
 
 		if(code != 404):
-			print_ok(str(code) + "\t" + url)
-			#print(i,"/",50, end="")
+			content = None
+			taille = 0
+			try:
+				content = res.read()
+				taille = len(content)
+			except AttributeError:
+				pass
+
+			if(r[0] == "files" or r[0] == "readables files"):
+				print_ok("{} {:>6} bytes {}".format(code, taille, url))
+
 			if(r[0] == "readables files"):
-				print(res.read().decode("utf-8"))
+				print(content.decode("utf-8"))
 		i += 1
 		time.sleep(args.tempo)
